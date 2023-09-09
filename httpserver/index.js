@@ -1,6 +1,8 @@
 const http = require("http");
-const url = require("url");
-
+// const url = require("url");
+const fs = require("fs");
+const data = fs.readFileSync(`${__dirname}/UserApi/userapi.json`, "utf-8");
+const objData = JSON.parse(data);
 const server = http.createServer((req, res) => {
   //   console.log(req.url);
   if (req.url == "/") {
@@ -9,6 +11,9 @@ const server = http.createServer((req, res) => {
     res.end("hello from the about sides");
   } else if (req.url == "/contact") {
     res.end("hello from the Contact sides");
+  } else if (req.url == "/userapi") {
+    res.writeHead(200, { "content-type": "applications/json" });
+    res.end(objData[0].name);
   } else {
     res.writeHead(404, { "Content-type": "text/html" });
     res.end("<h1>404 Error page. Page does not exist</h1>");
