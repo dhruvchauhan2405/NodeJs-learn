@@ -9,17 +9,20 @@ server.on("request", (req, res) => {
   //     res.end(data.toString());
   //   });
 
-  const rstream = fs.createReadStream("inpsut.txt");
-  rstream.on("data", (chunkdata) => {
-    res.write(chunkdata);
-  });
-  rstream.on("end", () => {
-    res.end();
-  });
-  rstream.on("error", (err) => {
-    console.log(err);
-    res.end("file not found");
-  });
+  //   const rstream = fs.createReadStream("inpsut.txt");
+  //   rstream.on("data", (chunkdata) => {
+  //     res.write(chunkdata);
+  //   });
+  //   rstream.on("end", () => {
+  //     res.end();
+  //   });
+  //   rstream.on("error", (err) => {
+  //     console.log(err);
+  //     res.end("file not found");
+  //   });
+
+  const rstream = fs.createReadStream("input.txt");
+  rstream.pipe(res);
 });
 
 server.listen(8000, "127.0.0.1");
