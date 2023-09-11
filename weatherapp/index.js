@@ -1,6 +1,6 @@
 const http = require("http");
 const fs = require("fs");
-var requests = require("requests");
+const axios = require("axios");
 
 const homeFile = fs.readFileSync("home.html", "utf-8");
 
@@ -12,27 +12,40 @@ const replaceVal = (tempval, orgval) => {
   temperature = temperature.replace("{%country%}", orgval.sys.country);
   return temperature;
 };
-const server = http.createServer((req, res) => {
+const server = http.createServer(async (req, res) => {
   if (req.url == "/") {
-    requests(
-      "https://api.openweathermap.org/data/2.5/weather?q=Mumbai&units=metric&appid=3613d2ed74df892dc8669a15d104286b"
-    )
-      .on("data", (chunk) => {
-        const objdata = JSON.parse(chunk);
-        const arrdata = [objdata];
-        // console.log(arrdata);
-        const realTimeData = arrdata
-          .map((val) => replaceVal(homeFile, val))
-          .join("");
-        res.write(realTimeData);
+    const response = await axios.get(
+      "https://api.openweathermap.org/data/2.5/weather?q=Chennai&units=metric&appid=3613d2ed74df892dc8669a15d104286b"
+    );
+    // console.log(response.data);
+    const stream = response.data;
 
-        // console.log(realTimeData);
-      })
-      .on("end", (err) => {
-        if (err) return console.log("connection closed due to errors", err);
+    // stream.on("data", (chunk) => {
+    // const objdata = JSON.parse(stream);
+    const arrdata = [response.data];
+    // console.log(arrdata);
+    const realTimeData = arrdata
+      .map((val) => replaceVal(homeFile, val))
+      .join("");
+    console.log(realTimeData);
+    return res.write(realTimeData);
 
-        res.end();
-      });
+    // });
+
+    // stream.on("end", (err) => {
+    //   console.log("stream done");
+    //   if (err) return console.log("connection closed due to errors", err);
+    //   res.end();
+    // });
+    // requests("")
+    //   .on("data", (chunk) => {
+    //     // res.end();
+    //     // console.log(realTimeData);
+    //   })
+    //   .on("end", (err) => {
+    //
+    //     res.end();
+    //   });
   }
 });
 
